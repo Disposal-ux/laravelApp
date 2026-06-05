@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Exception;
 use Illuminate\Validation\Validator;
 
 class AuthController extends Controller
@@ -34,29 +35,42 @@ class AuthController extends Controller
     }
 
     public function register(Request $request){
-        // dd($request->all());
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-            'mobile' => 'nullable|string|max:10',
-            'status' => 'required|in:1,2',
-            'role_type' => 'required|in:1,2',
-        ]);
+       
+       try {
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'mobile' => $request->mobile,
-            'status' => $request->status,
-            'role_type' => $request->role_type,
-        ]);
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|string|min:8|confirmed',
+                'mobile' => 'nullable|string|max:10',
+                'status' => 'required|in:1,2',
+                'role_type' => 'required|in:1,2',
+            ]);
 
-        return response([
-            'message' =>'User registered successfully',
-            'user' => $user,
-         ]);
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'mobile' => $request->mobile,
+                'status' => $request->status,
+                'role_type' => $request->role_type,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User registered successfully',
+                'data' => $user
+            ], 201);
+
+        } catch (Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
+    
 
 }
