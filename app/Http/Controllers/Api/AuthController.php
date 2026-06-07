@@ -18,19 +18,20 @@ class AuthController extends Controller
         ]);
 
         $user = User::where('email', $request->email)->first();
-
-        if($user && Hash::check($request->password, $user->password)){
-            $token = $user->createToken('auth_token')->plaintextToken;
-
+        
+         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-                'user' => $user
-            ]);
+                'message' => 'Invalid credentials'
+            ], 401);
         }
 
+
+         $token = $user->createToken('auth_token')->plainTextToken;
+
         return response()->json([
-            'message' => 'Invalid credentials'
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'user' => $user
         ]);
     }
 

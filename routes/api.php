@@ -7,5 +7,13 @@ use App\Models\User;
 use App\Http\Controllers\Api\AuthController;
 
 
-Route::middleware('auth:sanctum')->post('/login',[AuthController::class, 'login']);
+Route::post('/login',[AuthController::class, 'login']);
 Route::post('/register',[AuthController::class, 'register']);
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('/profile', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
