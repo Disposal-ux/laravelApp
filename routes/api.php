@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\AuthController;
 
 Route::post('/login',[AuthController::class, 'login']);
 Route::post('/register',[AuthController::class, 'register']);
+Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/profile', function (Request $request) {
